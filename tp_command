@@ -1,6 +1,6 @@
 #----------------------------------------------------------------------------#
 #
-# Copyright Alvin Alexander, http://alvinalexander.com, 2009-2012. 
+# Copyright Alvin Alexander, http://www.devdaily.com, 2009-2011. 
 # All Rights Reserved. This program is distributed free of charge under 
 # the terms and conditions of the GNU GPL Version 3.
 #
@@ -13,6 +13,17 @@
 #----------------------------------------------------------------------------#
 
 # Name these files whatever you want. Just make sure you can write to them.
+
+if [ ! -f ~/.tp_history ]
+then
+ touch ~/.tp_history
+fi
+
+if [ ! -f ~/.tp_aliases ]
+then
+ touch ~/.tp_aliases
+fi
+
 typeset -r TP_HISTORY_FILE=~/.tp_history
 typeset -r TP_ALIAS_FILE=~/.tp_aliases
 
@@ -47,7 +58,7 @@ function tp ()
       do
         dirlist[jj]="$line"
         (( jj++ ))
-      done < $TP_HISTORY_FILE
+      done < "$TP_HISTORY_FILE"
       listsize=${#dirlist[@]}
     }
 
@@ -199,7 +210,7 @@ function tp ()
       do
         dirlist[ii]="$line"
         (( ii++ ))
-      done < $TP_HISTORY_FILE
+      done < "$TP_HISTORY_FILE"
 
       if (( ( ii - searchFor ) < 0 ))
       then
@@ -208,7 +219,7 @@ function tp ()
       fi
 
       # go to the calculated line
-      numrecs=`wc -l $TP_HISTORY_FILE | awk '{ print $1 }'`
+      numrecs=`wc -l "$TP_HISTORY_FILE" | awk '{ print $1 }'`
       (( lineNeeded = numrecs - desiredLine ))
       i_go "${dirlist[$lineNeeded]}"
 
@@ -297,15 +308,15 @@ function i_addToHistory()
   i_load_dirlist
 
   # now write these entries back out to the history file    
-  rm -f $TP_HISTORY_FILE
-  echo $currentDir > $TP_HISTORY_FILE
+  rm -f "$TP_HISTORY_FILE"
+  echo $currentDir > "$TP_HISTORY_FILE"
   local ii
   for (( ii=0; ii < listsize; ii++ ))
   do
     # no duplicates allowed in the history file
     if [ "$currentDir" != "${dirlist[ii]}" ]
     then
-      echo ${dirlist[ii]} >> $TP_HISTORY_FILE
+      echo ${dirlist[ii]} >> "$TP_HISTORY_FILE"
     fi
   done
   
@@ -344,7 +355,7 @@ function getFullDirectoryFromHistory()
       gFDFHRet="$line"
       return
     fi
-  done < $TP_HISTORY_FILE
+  done < "$TP_HISTORY_FILE"
 }
 
 function displayTpUsageStatement()
@@ -432,7 +443,7 @@ function tpa()
     then
       if (( $# == 3 ))
       then
-          echo "$2:$3" >> $TP_ALIAS_FILE
+          echo "$2:$3" >> "$TP_ALIAS_FILE"
           echo "Alias \"$2\" was added for the directory \"$3\"."
       else
       echo 'Incorrect number of arguments for Add operation.'
@@ -446,7 +457,7 @@ function tpa()
     if (( DO_LIST ))
     then
       # TODO: improve this output format
-      cat $TP_ALIAS_FILE
+      cat "$TP_ALIAS_FILE"
       return
     fi
 
@@ -456,7 +467,7 @@ function tpa()
     if (( DO_REMOVE ))
     then
       local aliasToRemove=$2
-      if grep -cq "^${aliasToRemove}:" $TP_ALIAS_FILE
+      if grep -cq "^${aliasToRemove}:" "$TP_ALIAS_FILE"
       then
           savecasematch=$(shopt -p nocasematch)
           prompt=\
@@ -465,8 +476,8 @@ function tpa()
           if [[ "$answer" = y  ]]
           then
             # do remove here
-            grep -v "^${aliasToRemove}:" $TP_ALIAS_FILE > ${TP_ALIAS_FILE}.tmp
-            mv ${TP_ALIAS_FILE}.tmp $TP_ALIAS_FILE
+            grep -v "^${aliasToRemove}:" "$TP_ALIAS_FILE" > ${TP_ALIAS_FILE}.tmp
+            mv ${TP_ALIAS_FILE}.tmp "$TP_ALIAS_FILE"
           else
         echo "Remove operation cancelled."
       fi
@@ -481,7 +492,7 @@ function tpa()
     # find the alias and go to it #
     #-----------------------------#
 
-    local desiredDir=$(grep "^${1}:" $TP_ALIAS_FILE | cut -f2 -d:)
+    local desiredDir=$(grep "^${1}:" "$TP_ALIAS_FILE" | cut -f2 -d:)
     [[ -n "$desiredDir" ]] && { tp "$desiredDir"; return; }
     #echo "Alias \"${1}\" not found ... don't know where to go."
     displayTpaUsageStatement

@@ -21,19 +21,12 @@ INSTALLATION
 
 Installation is very simple, and requires just a few steps, as shown here:
 
-1) Copy the tp_command file to your HOME directory. Personally, I rename
-   my file to .tp_command, and that's what I'll use for this documentation,
-   but you can name this file whatever you like.
+1) Copy the .tp_command file to your HOME directory. 
 
-2) Move to your home directory, and issue the following two commands:
-
-   touch .tp_aliases
-   touch .tp_history
-
-3) Edit your ~/.bash_profile or ~/.bashrc file, and add a line similar to
+2) Edit your ~/.bash_profile or ~/.bashrc file, and add a line similar to
    this:
 
-   . .tp_command
+   . ~/.tp_command
 
    This command tells Bash to "source" the .tp_command file, so make sure you
    use whatever filename you used in Step 1.
@@ -49,7 +42,7 @@ Installation is very simple, and requires just a few steps, as shown here:
    you can just run this command without having to log out and then log back 
    in again:
 
-   . .tp_command
+   . ~/.tp_command
 
    Either approach should work fine.
 
